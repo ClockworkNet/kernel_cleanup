@@ -21,4 +21,4 @@ Tested on:
 
 ## License
 
-- [LICENSE](LICENSE) [MIT License](http://www.opensource.org/licenses/MIT)
+- [LICENSE](LICENSE) ([MIT License](http://www.opensource.org/licenses/MIT))
