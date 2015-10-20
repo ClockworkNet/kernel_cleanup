@@ -1,11 +1,16 @@
 # kernel_cleanup
 
-Evaluate installed Linux kernel packages (linux-headers, linux-image, linux-image-extra) and purge any that are not the current version or the newest version.
+Evaluate installed Linux kernel packages (linux-headers, linux-image,
+linux-image-extra) and purge any that are not the current version or the
+newest version.
 
 
 ## Cron Example
 
+`dpkg` expects a more robust path:
+
 ```
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
 @daily /usr/local/sbin/kernel_cleanup -q
 ```
 
