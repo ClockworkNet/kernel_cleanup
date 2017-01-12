@@ -68,7 +68,8 @@ def compare_versions(args, apt_cache, kernel_ver):
     data = dict()
 
     def prep_data(simple_name, status):
-        """Prep data structure."""
+        """Prep data structure.
+        """
         if simple_name not in data:
             data[simple_name] = dict()
         if status not in data[simple_name]:
@@ -182,7 +183,7 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        sys.stderr.write("(130) Halted via KeyboardInterrupt.")
+        sys.stderr.write("ERROR: Halted via KeyboardInterrupt.")
         sys.exit(130)
     except SystemExit as e:
         sys.exit(e.code)
