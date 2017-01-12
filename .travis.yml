@@ -14,7 +14,7 @@ python:
 #    - python: "nightly"
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y python-apt python3-apt
+  - sudo apt-get install -y python-apt python-pip python3-apt python3-pip
 install:
   - pip install -r tests/requirements.txt
 script:
