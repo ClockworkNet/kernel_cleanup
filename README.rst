@@ -29,9 +29,10 @@ Compatibility
     :target: https://travis-ci.org/ClockworkNet/kernel_cleanup
 Tested on:
 
-- Ubuntu 10.04 (Lucid Lynx)
-- Ubuntu 12.04 (Precise Pangolin)
-- Ubuntu 14.04 (Trusty Tahr)
+- Ubuntu 10.04 LTS (Lucid Lynx)
+- Ubuntu 12.04 LTS (Precise Pangolin)
+- Ubuntu 14.04 LTS (Trusty Tahr)
+- Ubuntu 16.04 LTS (Xenial Xerus)
 
 
 Testing Quick Start
