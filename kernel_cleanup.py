@@ -1,35 +1,38 @@
 #!/usr/bin/env python
-# To Do
-# - sort statuses
-# - newest isn't completely accurate, should support multiple packages within
-# - keep newest-oldest (proven to boot)
+# vim: set fileencoding=utf-8 :
+
 """Evaluate installed Linux kernel packages and purge any that are not the
-current version or the newest version."""
+current version or the newest version.
+"""
+
 # Standard library
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 import argparse
 import os
 import platform
 import re
 import sys
+
 # Third-party
 import apt
 import apt_pkg
 
-re_simple_version = re.compile(r"([\d.]+-\d+)")
-re_simple_name = re.compile(r"^([^0-9]+)-[0-9]")
-linux_packages = ["linux-headers", "linux-image", "linux-image-extra"]
+
+RE_SIMPLE_VERSION = re.compile(r"([\d.]+-\d+)")
+RE_SIMPLE_NAME = re.compile(r"^([^0-9]+)-[0-9]")
+LINUX_PACKAGES = ["linux-headers", "linux-image", "linux-image-extra"]
 
 
 def validate_and_mark(apt_cache, data):
     """Validate and mark packages to be purged."""
-    for linux_package, statuses in sorted(data.iteritems()):
+    for linux_package in sorted(list(data.keys())):
+        statuses = data[linux_package]
         if (("current" not in data[linux_package] or
                 len(data[linux_package]["current"]) < 1) and
                 "purge" in data[linux_package]):
-            sys.stderr.write("WARNING: Skipping \"%s\": there are entries"
+            sys.stderr.write("WARNING: Skipping \"{0}\": there are entries"
                              " within \"purge\", but none within \"current\"!"
-                             "\n"% linux_package)
+                             "\n".format(linux_package))
             del data[linux_package]
             continue
         if "purge" in statuses:
@@ -41,9 +44,11 @@ def validate_and_mark(apt_cache, data):
 
 def print_data(data):
     """Print linux package statuses."""
-    for linux_package, statuses in sorted(data.iteritems()):
+    for linux_package in sorted(list(data.keys())):
+        statuses = data[linux_package]
         print(linux_package)
-        for status, packages in sorted(statuses.iteritems()):
+        for status in sorted(list(statuses.keys())):
+            packages = statuses[status]
             print(" " * 3, status)
             packages.sort()
             for package in packages:
@@ -70,16 +75,16 @@ def compare_versions(args, apt_cache, kernel_ver):
 
     for name in apt_cache.keys():
         try:
-            simple_name = re_simple_name.match(name).group(1)
+            simple_name = RE_SIMPLE_NAME.match(name).group(1)
         except:
             continue
-        if simple_name not in linux_packages:
+        if simple_name not in LINUX_PACKAGES:
             continue
         package = apt_cache[name]
         if not package.is_installed:
             continue
         version = package.versions[0].version
-        simple_version = re_simple_version.match(version).group(1)
+        simple_version = RE_SIMPLE_VERSION.match(version).group(1)
         kernel_compare = apt_pkg.version_compare(kernel_ver, simple_version)
         if kernel_compare == 0:
             prep_data(simple_name, "current")
@@ -119,7 +124,7 @@ def get_kernel_version(args):
     """Get Debian/Ubuntu kernel version."""
     kernel_version_long = platform.uname()[2]
     try:
-        kernel_version = re_simple_version.match(kernel_version_long).group(1)
+        kernel_version = RE_SIMPLE_VERSION.match(kernel_version_long).group(1)
     except:
         sys.stderr.write("ERROR: Unexpected (non Ubuntu?) Linux version: "
                          "%s\n" % platform.platform())
@@ -163,4 +168,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit as e:
+        sys.exit(e.code)
+    except KeyboardInterrupt as e:
+        sys.stderr.write("({0}) Halted via KeyboardInterrupt.".format(e.code))
+        sys.exit(e.code)
+    except:
+        raise
