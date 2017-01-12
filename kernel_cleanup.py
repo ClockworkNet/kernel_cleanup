@@ -24,7 +24,8 @@ LINUX_PACKAGES = ["linux-headers", "linux-image", "linux-image-extra"]
 
 
 def validate_and_mark(apt_cache, data):
-    """Validate and mark packages to be purged."""
+    """Validate and mark packages to be purged.
+    """
     for linux_package in sorted(list(data.keys())):
         statuses = data[linux_package]
         if (("current" not in data[linux_package] or
@@ -43,26 +44,26 @@ def validate_and_mark(apt_cache, data):
 
 
 def print_data(data):
-    """Print linux package statuses."""
+    """Print linux package statuses.
+    """
     for linux_package in sorted(list(data.keys())):
         statuses = data[linux_package]
         print(linux_package)
         for status in sorted(list(statuses.keys())):
             packages = statuses[status]
-            print(" " * 3, status)
+            print("{0:4}{1}".format("", status))
             packages.sort()
             for package in packages:
                 if status == "newest":
-                    print(" " * 7, package[0])
+                    print("{0:8}{1}".format("", package[0]))
                 else:
-                    print(" " * 7, package)
+                    print("{0:8}{1}".format("", package))
     print()
 
 
 def compare_versions(args, apt_cache, kernel_ver):
-    """
-    Compare Linux packages to kernel version. Mark those that are neither the
-    current nor the newest for purging.
+    """Compare Linux packages to kernel version. Mark those that are neither
+    the current nor the newest for purging.
     """
     data = dict()
 
@@ -76,6 +77,10 @@ def compare_versions(args, apt_cache, kernel_ver):
     for name in apt_cache.keys():
         try:
             simple_name = RE_SIMPLE_NAME.match(name).group(1)
+        except KeyboardInterrupt:
+            raise
+        except SystemExit:
+            raise
         except:
             continue
         if simple_name not in LINUX_PACKAGES:
@@ -121,10 +126,15 @@ def compare_versions(args, apt_cache, kernel_ver):
 
 
 def get_kernel_version(args):
-    """Get Debian/Ubuntu kernel version."""
+    """Get Debian/Ubuntu kernel version.
+    """
     kernel_version_long = platform.uname()[2]
     try:
         kernel_version = RE_SIMPLE_VERSION.match(kernel_version_long).group(1)
+    except KeyboardInterrupt:
+        raise
+    except SystemExit:
+        raise
     except:
         sys.stderr.write("ERROR: Unexpected (non Ubuntu?) Linux version: "
                          "%s\n" % platform.platform())
@@ -136,7 +146,8 @@ def get_kernel_version(args):
 
 
 def parser_setup():
-    """Instantiate and return an ArgumentParser instance."""
+    """Instantiate and return an ArgumentParser instance.
+    """
     ap = argparse.ArgumentParser(description=__doc__)
     apg = ap.add_mutually_exclusive_group()
     apg.add_argument("-n", "--dryrun", action="store_true",
@@ -170,10 +181,10 @@ def main():
 if __name__ == "__main__":
     try:
         main()
+    except KeyboardInterrupt:
+        sys.stderr.write("(130) Halted via KeyboardInterrupt.")
+        sys.exit(130)
     except SystemExit as e:
-        sys.exit(e.code)
-    except KeyboardInterrupt as e:
-        sys.stderr.write("({0}) Halted via KeyboardInterrupt.".format(e.code))
         sys.exit(e.code)
     except:
         raise
