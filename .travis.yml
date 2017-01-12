@@ -12,7 +12,10 @@ python:
 #  allow_failures:
 #    - python: "3.6"
 #    - python: "nightly"
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y python-apt python3-apt
 install:
-- "pip install -r tests/requirements.txt"
+  - pip install -r tests/requirements.txt
 script:
-- py.test
+  - py.test
