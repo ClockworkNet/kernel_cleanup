@@ -2,19 +2,16 @@ sudo: required
 dist: trusty
 language: python
 python:
-#  - "2.6"       # default on Ubuntu 10.04 Lucid
+  - "2.6"       # default on Ubuntu 10.04 Lucid
   - "2.7"       # default on Ubuntu 12.04 Precise and later
-#  - "3.4"       # available on Ubuntu 14.04 Trusty
-#  - "3.5"       # available on Ubuntu 16.04 Xenial
-#  - "3.6"
-#  - "nightly"
-#matrix:
-#  allow_failures:
-#    - python: "3.6"
-#    - python: "nightly"
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y python-apt python3-apt
+  - "3.4"       # available on Ubuntu 14.04 Trusty
+  - "3.5"       # available on Ubuntu 16.04 Xenial
+  - "3.6"
+  - "nightly"
+matrix:
+  allow_failures:
+    - python: "3.6"
+    - python: "nightly"
 install:
   - pip install -r tests/requirements.txt
 script:
